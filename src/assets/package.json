@@ -1,0 +1,44 @@
+{
+  "description": "Vitrine assets package for IntranetOne",
+  "license": "MIT",
+  "main": "wploader.js",
+  "name": "intranetone-vitrine",
+  "version": "1.0.1",
+  "maintainers": [
+    {
+      "name": "Marcelo Disconzi",
+      "email": "mdisconzi@gmail.com"
+    },
+    {
+      "name": "Thiago Brauer",
+      "email": "thiagobrauer@gmail.com"
+    },
+    {
+      "name": "Paulo Henrique Demori",
+      "email": "phdemori@gmail.com"
+    },
+    {
+      "name": "Luis Disconzi",
+      "email": "luis@dataview.com.br"
+    }
+  ],
+  "keywords": [
+    "Laravel",
+    "IntranetOne",
+    "Intranet CMS",
+    "Dataview",
+    "Vitrine do professor",
+    "Vitrine",
+    "Serviço Customizado"
+  ],
+  "IODependencies": {
+    "devbridge-autocomplete": "^1.4.10",
+    "moment": "^2.21.0",
+    "dropzone": "^5.1.1",
+    "cropperjs": "^1.5.6",
+    "jquery-cropper": "^1.0.1"
+  },
+  "ignore": [
+    "node_modules"
+  ]
+}
