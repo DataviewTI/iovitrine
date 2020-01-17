@@ -1,28 +1,28 @@
 <?php
-namespace Dataview\IOEntity;
+namespace Dataview\Vitrine;
 
 use DataTables;
 use Dataview\IntranetOne\IOController;
-use Dataview\IOEntity\Entity;
+use Dataview\IOVitrine\Vitrine;
 use Dataview\IntranetOne\Group;
-use Dataview\IOEntity\EntityRequest;
+use Dataview\IOVitrine\VitrineRequest;
 use Illuminate\Http\Response;
 
-class EntityController extends IOController
+class VitrineController extends IOController
 {
 
   public function __construct(){
-    $this->service = 'entity';
+    $this->service = 'vitrine';
   }
 
   public function index(){
-    return view('Entity::index');
+    return view('Vitrine::index');
   }
 
   function list() {
-    $query = Entity::select('id','cpf_cnpj','otica_id','nome','rg','sexo','estado_civil','dt_nascimento','telefone1','telefone2','celular1','celular2','email','zipCode','address','address2','city_id','observacao','group_id', 'created_at')
+    $query = Vitrine::select('id','cpf_cnpj','otica_id','nome','rg','sexo','estado_civil','dt_nascimento','telefone1','telefone2','celular1','celular2','email','zipCode','address','address2','city_id','observacao','group_id', 'created_at')
     ->with(['otica', 'groups' => function($query){
-        $query->select('status')->orderBy('entity_group.id','desc')->limit(2);
+        $query->select('status')->orderBy('vitrine_group.id','desc')->limit(2);
 		}])
     ->orderBy('created_at', 'desc')->get();
 
@@ -30,27 +30,27 @@ class EntityController extends IOController
   }
 
   function historyList($id) {
-    $ent = Entity::where('id',$id)->first();
+    $ent = Vitrine::where('id',$id)->first();
     
     $query = filled($ent) ? $ent
       ->groups()
-      ->select('entity_group.id','otica_id','date','value','payment','product','details','alias','status')
-      ->leftJoin('oticas','oticas.id','entity_group.otica_id')
-      ->orderBy('entity_group.id','desc')
+      ->select('vitrine_group.id','otica_id','date','value','payment','product','details','alias','status')
+      ->leftJoin('oticas','oticas.id','vitrine_group.otica_id')
+      ->orderBy('vitrine_group.id','desc')
       ->get() : [];
 
     return Datatables::of(collect($query))->make(true);
   }
 
 
-  public function create(EntityRequest $request){
+  public function create(VitrineRequest $request){
     $check = $this->__create($request);
     
     if (!$check['status']) {
         return response()->json(['errors' => $check['errors']], $check['code']);
     }
     
-    $obj = new Entity($request->all());
+    $obj = new Vitrine($request->all());
 
     if($request->sizes!= null){
       $obj->setAppend("sizes",$request->sizes);
@@ -64,7 +64,7 @@ class EntityController extends IOController
   }
 
 
-  public function historyCreate(EntityHistoryRequest $request){
+  public function historyCreate(VitrineHistoryRequest $request){
     $check = $this->__create($request);
     
     if (!$check['status']) {
@@ -73,7 +73,7 @@ class EntityController extends IOController
     
     $r = (object) $request->all();
 
-    $ent =Entity::where('id',$r->entityId)->first();
+    $ent =Vitrine::where('id',$r->vitrineId)->first();
 
     if(filled($ent)){
       $ent->groups()->save(new Group([
@@ -103,20 +103,20 @@ class EntityController extends IOController
         return response()->json(['errors' => $check['errors']], $check['code']);
     }
 
-    $query = Entity::select('entities.*', 'cities.city', 'cities.region')
+    $query = Vitrine::select('vitrines.*', 'cities.city', 'cities.region')
       ->with([
           'group'=>function($query){
           $query->select('groups.id','sizes')
           ->with('files');
         },
       ])
-        ->join('cities', 'entities.city_id', '=', 'cities.id')
-        ->where('entities.id', $id)->get();
+        ->join('cities', 'vitrines.city_id', '=', 'cities.id')
+        ->where('vitrines.id', $id)->get();
 
     return response()->json(['success' => true, 'data' => $query]);
   }
 
-  public function update($id, EntityRequest $request){
+  public function update($id, VitrineRequest $request){
     $check = $this->__update($request);
     if (!$check['status']) {
         return response()->json(['errors' => $check['errors']], $check['code']);
@@ -124,7 +124,7 @@ class EntityController extends IOController
 
     $_new = (object) $request->all();
 
-    $_old = Entity::find($id);
+    $_old = Vitrine::find($id);
 
     $upd = ['otica_id','nome','rg','sexo','local_trabalho','estado_civil','dt_nascimento','telefone1','telefone2','celular1','celular2','email','zipCode','address','address2','city_id','observacao','refs_comerciais','refs_pessoais'];
 
@@ -139,7 +139,7 @@ class EntityController extends IOController
     else
       if(count(json_decode($_new->__dz_images))>0){
         $_old->group()->associate(Group::create([
-          'group' => "Album da Entidade".$id,
+          'group' => "Album da Vitrine".$id,
           'sizes' => $_new->sizes
           ])
         );
@@ -156,7 +156,7 @@ class EntityController extends IOController
         return response()->json(['errors' => $check['errors']], $check['code']);
     }
 
-    $obj = Entity::find($id);
+    $obj = Vitrine::find($id);
     $obj = $obj->delete();
     return json_encode(['sts' => $obj]);
   }
@@ -168,14 +168,14 @@ class EntityController extends IOController
         return response()->json(['errors' => $check['errors']], $check['code']);
     }
 
-    $obj = Entity::find($eid);
+    $obj = Vitrine::find($eid);
     $x = $obj->groups()->detach($gid);
     return json_encode(['sts' => $x]);
   }
 
   
   public function checkId($id){
-    return Entity::select('razaosocial')->where('id', '=', $id)->get();
+    return Vitrine::select('razaosocial')->where('id', '=', $id)->get();
   }
 
   public function getCep($cep){
@@ -190,7 +190,7 @@ class EntityController extends IOController
     return $r;
   }
 
-  public function getEntidades($query){
-    return json_encode(Entity::select('razaosocial as n', 'cpf_cnpj as k')->where('razaosocial', 'like', "%$query")->get());
+  public function getVitrines($query){
+    return json_encode(Vitrine::select('razaosocial as n', 'cpf_cnpj as k')->where('razaosocial', 'like', "%$query")->get());
   }
 }
