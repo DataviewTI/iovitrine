@@ -73,8 +73,8 @@ function IOVitrine(params = {}) {
 
     //copy separated for compatibility
     mix.scripts(
-      $.dep.vitrine + 'history.js',
-      IO.dest.io.root + 'services/io-vitrine-history.min.js'
+      $.dep.vitrine + 'formacao.js',
+      IO.dest.io.root + 'services/io-vitrine-formacao.min.js'
     );
 
     mix.copy(

@@ -2,6 +2,7 @@
 namespace Dataview\IOVitrine;
 
 use Dataview\IntranetOne\Service;
+use Dataview\IntranetOne\Category;
 use Dataview\IOVitrine\Models\City;
 use Dataview\IOVitrine\Models\Otica;
 use Illuminate\Database\Seeder;
@@ -15,12 +16,12 @@ class VitrineSeeder extends Seeder
   {
     //cria o serviço se ele não existe
     if (!Service::where('service', 'Vitrine')->exists()) {
-        Service::insert([
+        $service = Service::create([
             'service' => "Vitrine",
             'alias' => 'vitrine',
-            'trans' => 'Clientes',
-            'ico' => 'ico-book-users',
-            'description' => 'Relação de Clientes',
+            'trans' => 'Vitrine',
+            'ico' => 'ico-save',
+            'description' => 'Vitrine do Professor',
             'order' => Service::max('order') + 1,
         ]);
     }
@@ -56,14 +57,53 @@ class VitrineSeeder extends Seeder
           ]);
       }
 
-      $json = File::get(IOVitrineServiceProvider::pkgAddr('/assets/src/cities.json'));
-      $data = json_decode($json, true);
-      foreach ($data as $obj) {
-          City::create([
-            'id' => $obj['i'],
-            'city' => $obj['c'],
-            'region' => $obj['u'],
+      // $json = File::get(IOVitrineServiceProvider::pkgAddr('/assets/src/cities.json'));
+      // $data = json_decode($json, true);
+      // foreach ($data as $obj) {
+      //     City::create([
+      //       'id' => $obj['i'],
+      //       'city' => $obj['c'],
+      //       'region' => $obj['u'],
+      //     ]);
+      // }
+
+      //seed das categories
+
+      $cats = [
+        ["name"=>"area", "subc"=> [
+          "Ciências Humanas",
+          "Ciências Exatas",
+          "Ciências Biológicas",
+        ]],
+        ["name"=>"grau", "subc"=> [
+          "Graduação",
+          "Especialização",
+          "Mestrado",
+          "Doutorado",
+        ]]
+      ];
+
+      $i=0;
+      foreach($cats as $c){
+         $cat = Category::create([
+            'category' => $c['name'],
+            'service_id' => $service->id,
+            'category_slug' => str_slug($c['name']),
+            'order'=>$i++,
+            'erasable'=>false
           ]);
+          $j=0;
+          foreach($c['subc'] as $sc){
+            Category::create([
+                'category' => $sc,
+                'category_id' => $cat->id,
+                'category_slug' => str_slug($sc),
+                'order'=>$j++,
+                'erasable'=>false
+              ]);
+          }
       }
+
+
   }
 }

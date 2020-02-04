@@ -1,10 +1,11 @@
 <?php
-namespace Dataview\Vitrine;
+namespace Dataview\IOVitrine;
 
 use DataTables;
 use Dataview\IntranetOne\IOController;
 use Dataview\IOVitrine\Vitrine;
 use Dataview\IntranetOne\Group;
+use Dataview\IntranetOne\Category;
 use Dataview\IOVitrine\VitrineRequest;
 use Illuminate\Http\Response;
 
@@ -20,23 +21,29 @@ class VitrineController extends IOController
   }
 
   function list() {
-    $query = Vitrine::select('id','cpf_cnpj','otica_id','nome','rg','sexo','estado_civil','dt_nascimento','telefone1','telefone2','celular1','celular2','email','zipCode','address','address2','city_id','observacao','group_id', 'created_at')
-    ->with(['otica', 'groups' => function($query){
-        $query->select('status')->orderBy('vitrine_group.id','desc')->limit(2);
+    $query = Vitrine::select('id','cpf','nome','sexo','dt_nascimento','telefone1','telefone2','celular1','celular2','email','zipCode','address','address2','city_id','resumo','group_id', 'created_at')
+    ->with(['formacao' => function($query){
+        $query->select('vitrine_category.id as vid','area','curso','instituicao','inicio','fim','c.category','c.id','c.order')
+        ->whereNotNull('fim')
+        ->leftJoin('categories as c', 'vitrine_category.category_id', '=', 'c.id')
+        ->orderBy('c.order','desc')
+        ->orderBy('vitrine_category.id','desc')
+        ->limit(2);
 		}])
     ->orderBy('created_at', 'desc')->get();
 
     return Datatables::of(collect($query))->make(true);
   }
 
-  function historyList($id) {
+  function formacaoList($id) {
     $ent = Vitrine::where('id',$id)->first();
     
     $query = filled($ent) ? $ent
-      ->groups()
-      ->select('vitrine_group.id','otica_id','date','value','payment','product','details','alias','status')
-      ->leftJoin('oticas','oticas.id','vitrine_group.otica_id')
-      ->orderBy('vitrine_group.id','desc')
+      ->formacao()
+      ->select('vitrine_category.id as vid','area','curso','instituicao','inicio','fim','c.category','c.id','c.order')
+      ->leftJoin('categories as c', 'vitrine_category.category_id', '=', 'c.id')
+      ->orderBy('c.order','desc')
+      ->orderBy('vitrine_category.id','desc')
       ->get() : [];
 
     return Datatables::of(collect($query))->make(true);
@@ -64,7 +71,7 @@ class VitrineController extends IOController
   }
 
 
-  public function historyCreate(VitrineHistoryRequest $request){
+  public function formacaoCreate(VitrineFormacaoRequest $request){
     $check = $this->__create($request);
     
     if (!$check['status']) {
@@ -76,17 +83,12 @@ class VitrineController extends IOController
     $ent =Vitrine::where('id',$r->vitrineId)->first();
 
     if(filled($ent)){
-      $ent->groups()->save(new Group([
-          'group' => "Histórico teste",
-          'sizes' => ''
-        ]),[
-            "otica_id"=>$r->hist_otica_id,
-            "date"=>$r->dt_compra_submit,
-            "value"=>$r->value,
-            "payment"=>$r->payment,
-            "product"=>$r->product,
-            "details"=>$r->details,
-            "status"=>$r->status
+      $ent->formacao()->attach(Category::where('id',$r->form_tipo)->first()->id,[
+            "curso"=>$r->form_curso,
+            "area"=>$r->form_area,
+            "instituicao"=>$r->form_instituicao,
+            "inicio"=>$r->form_inicio,
+            "fim"=>optional($r)->form_fim,
           ]);
     }
 
@@ -116,6 +118,26 @@ class VitrineController extends IOController
     return response()->json(['success' => true, 'data' => $query]);
   }
 
+
+  public function formacaoView($id)
+  {
+    $check = $this->__view();
+    if (!$check['status']) {
+        return response()->json(['errors' => $check['errors']], $check['code']);
+    }
+
+    $query = \DB::table('vitrine_category')
+      ->select('vitrine_category.id as vid','area','curso','instituicao','inicio','fim','c.category','c.id','c.order')
+      ->leftJoin('categories as c', 'vitrine_category.category_id', '=', 'c.id')
+      ->orderBy('c.order','desc')
+      ->orderBy('vitrine_category.id','desc')
+      ->where('vitrine_category.id',$id)
+      ->get();
+
+    return response()->json(['success' => true, 'data' => $query]);
+  }
+
+
   public function update($id, VitrineRequest $request){
     $check = $this->__update($request);
     if (!$check['status']) {
@@ -126,7 +148,7 @@ class VitrineController extends IOController
 
     $_old = Vitrine::find($id);
 
-    $upd = ['otica_id','nome','rg','sexo','local_trabalho','estado_civil','dt_nascimento','telefone1','telefone2','celular1','celular2','email','zipCode','address','address2','city_id','observacao','refs_comerciais','refs_pessoais'];
+    $upd = ['nome','sexo','dt_nascimento','telefone1','telefone2','celular1','celular2','email','zipCode','address','address2','city_id','resumo'];
 
     foreach($upd as $u)
       $_old->{$u} = optional($_new)->{$u};
@@ -150,6 +172,28 @@ class VitrineController extends IOController
     return response()->json(['success' => $_old->save()]);
   }
 
+
+  public function formacaoUpdate($id, VitrineFormacaoRequest $request){
+    $check = $this->__update($request);
+    if (!$check['status']) {
+        return response()->json(['errors' => $check['errors']], $check['code']);
+    }
+
+    $_new = (object) $request->all();
+
+    $res = \DB::table('vitrine_category')->where('id',$id)->update([
+      "curso"=>$_new->form_curso,
+      "area"=>$_new->form_area,
+      "instituicao"=>$_new->form_instituicao,
+      "inicio"=>$_new->form_inicio,
+      "fim"=>optional($_new)->form_fim,
+    ]);
+
+
+    return response()->json(['success' => $res]);
+  }
+
+
   public function delete($id){
     $check = $this->__delete();
     if (!$check['status']) {
@@ -162,15 +206,14 @@ class VitrineController extends IOController
   }
 
 
-  public function deleteHist($eid,$gid){
+  public function formacaoDelete($id){
     $check = $this->__delete();
     if (!$check['status']) {
         return response()->json(['errors' => $check['errors']], $check['code']);
     }
 
-    $obj = Vitrine::find($eid);
-    $x = $obj->groups()->detach($gid);
-    return json_encode(['sts' => $x]);
+    $ret = \DB::table('vitrine_category')->where('id',$id)->delete();
+    return json_encode(['sts' => $ret]);
   }
 
   
@@ -191,6 +234,6 @@ class VitrineController extends IOController
   }
 
   public function getVitrines($query){
-    return json_encode(Vitrine::select('razaosocial as n', 'cpf_cnpj as k')->where('razaosocial', 'like', "%$query")->get());
+    return json_encode(Vitrine::select('razaosocial as n', 'cpf as k')->where('razaosocial', 'like', "%$query")->get());
   }
 }

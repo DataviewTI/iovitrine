@@ -6,10 +6,12 @@ new IOService(
   },
   self => {
     setTimeout(() => {
-      self.tabs['historico'].tab.addClass('disabled');
+      self.tabs['formacao-academica'].tab.addClass('disabled');
 
       // $("#user_name_container").style({ display: 'hidden' })
       document.getElementById('user_name').firstChild.nodeValue = '';
+
+      console.log();
 
       self.tabs['cadastrar'].tab.on('shown.bs.tab', e => {
         IO.active = self;
@@ -21,19 +23,12 @@ new IOService(
         self.dt.columns.adjust();
       });
 
-      self.tabs['outras-observacoes'].tab.on('shown.bs.tab', e => {
-        $('#observacao').focus();
-      });
-
-      self.tabs['referenciasinformacoes-pessoais-e-comerciais'].tab.on(
-        'shown.bs.tab',
-        e => {
-          $('#refs_pessoais').focus();
-        }
-      );
-
       self.tabs['telefones-e-endereco'].tab.on('shown.bs.tab', e => {
         $('#celular1').focus();
+      });
+
+      self.tabs['resumo'].tab.on('shown.bs.tab', e => {
+        $('#resumo').focus();
       });
 
       self.tabs['cadastrar'].tab.tab('show');
@@ -49,43 +44,84 @@ new IOService(
           $.fn.dataTable.defaults.initComplete(this);
 
           api.addDTSelectFilter([
-            { el: $('#ft_loja'), column: 'otica' },
+            // { el: $('#ft_loja'), column: 'otica' },
             { el: $('#ft_status'), column: 'groups' }
           ]);
 
-          $('#ft_dtini')
-            .pickadate()
-            .pickadate('picker')
-            .on('render', function() {
-              api.draw();
-            });
+          api.addDTInputFilter([
+            { el: $('#ft_instituicao'), column: 'instituicao' },
+            { el: $('#ft_curso'), column: 'curso' }
+          ]);
 
-          $('#ft_dtfim')
-            .pickadate()
-            .pickadate('picker')
-            .on('render', function() {
-              api.draw();
-            });
+          // $('#ft_dtini')
+          //   .pickadate()
+          //   .pickadate('picker')
+          //   .on('render', function() {
+          //     api.draw();
+          //   });
 
-          api.addDTBetweenDatesFilter({
-            column: 'created_at',
-            min: $('#ft_dtini'),
-            max: $('#ft_dtfim')
-          });
+          // $('#ft_dtfim')
+          //   .pickadate()
+          //   .pickadate('picker')
+          //   .on('render', function() {
+          //     api.draw();
+          //   });
+
+          // api.addDTBetweenDatesFilter({
+          //   column: 'created_at',
+          //   min: $('#ft_dtini'),
+          //   max: $('#ft_dtfim')
+          // });
         },
         footerCallback: function(row, data, start, end, display) {},
         columns: [
           { data: 'id', name: 'id' },
+          { data: 'formacao' },
+          { data: 'instituicao', name: 'instituicao' },
+          { data: 'curso', name: 'curso' },
+          { data: 'conclusao', name: 'data' },
           { data: 'nome' },
-          { data: 'cpf_cnpj' },
-          { data: 'otica.name', name: 'otica' },
+          { data: 'cpf' },
+          { data: 'email', name: 'email' },
           { data: 'celular1', name: 'celular1' },
-          { data: 'created_at', name: 'created_at' },
-          { data: 'groups', name: 'groups' },
           { data: 'actions', name: 'actions' }
         ],
         columnDefs: [
           { targets: '__dt_', width: '3%', searchable: true, orderable: true },
+          {
+            targets: '__dt_formacao',
+            searchable: false,
+            orderable: true,
+            width: '5%',
+            render: function(data, type, row) {
+              return row.formacao.length ? row.formacao[0].category : '';
+            }
+          },
+          {
+            targets: '__dt_instituicao',
+            searchable: true,
+            orderable: true,
+            width: '10%',
+            render: function(data, type, row) {
+              return row.formacao.length ? row.formacao[0].instituicao : '';
+            }
+          },
+          {
+            targets: '__dt_curso',
+            searchable: true,
+            orderable: true,
+            width: '15%',
+            render: function(data, type, row) {
+              return row.formacao.length ? row.formacao[0].curso : '';
+            }
+          },
+          {
+            targets: '__dt_data',
+            width: '3%',
+            render: function(data, type, row) {
+              return row.formacao.length ? row.formacao[0].fim : '';
+            }
+          },
           {
             targets: '__dt_nome',
             searchable: true,
@@ -93,77 +129,22 @@ new IOService(
             width: 'auto'
           },
           {
-            targets: '__dt_cpfcnpj',
+            targets: '__dt_cpf',
             searchable: true,
             orderable: true,
-            width: '10%'
+            width: '7%'
           },
           {
-            targets: '__dt_origem',
+            targets: '__dt_email',
             searchable: true,
             orderable: true,
-            width: '10%'
+            width: '15%'
           },
           {
             targets: '__dt_celular',
             searchable: true,
             orderable: true,
             width: '10%'
-          },
-          {
-            targets: '__dt_cadastro',
-            type: 'date-br',
-            width: '9%',
-            orderable: true,
-            className: 'text-center',
-            render: function(data, type, row) {
-              return moment(data).format('DD/MM/YYYY');
-            }
-          },
-          {
-            targets: '__dt_s',
-            width: '2%',
-            orderable: true,
-            className: 'text-center',
-            render: function(data, type, row) {
-              console.log('ha', data);
-              let color;
-              if (!data.length)
-                return self.dt.addDTIcon({
-                  ico: 'ico-dot',
-                  title: 'Sem Histórico',
-                  value: 'no-history',
-                  pos: 'left',
-                  _class: 'sts-no-history'
-                });
-
-              switch (data[0].status) {
-                case 'Normal':
-                  color = 'sts-normal';
-                  break;
-                case 'Bloqueado':
-                  color = 'sts-bloqueado';
-                  break;
-                case 'De Risco':
-                  color = 'sts-de-risco';
-                  break;
-                case 'Avalisado':
-                  color = 'sts-avalisado';
-                  break;
-                case 'Inativo':
-                default:
-                  color = 'sts-inativo';
-                  break;
-              }
-
-              return self.dt.addDTIcon({
-                ico: 'ico-dot',
-                title: data[0].status,
-                value: data[0].status,
-                pos: 'left',
-                _class: color
-              });
-            }
           },
           {
             targets: '__dt_acoes',
@@ -198,32 +179,14 @@ new IOService(
         $('[data-toggle="tooltip"]').tooltip();
       });
 
-    $('#cpf_cnpj')
+    $('#cpf')
       .removeAttr('readonly')
-      .mask($.jMaskGlobals.CPFCNPJMaskBehavior, {
-        onKeyPress: function(val, e, field, options) {
-          var args = Array.from(arguments);
-          args.push(iscpf => {
-            if (self.fv !== null) {
-              if (iscpf) {
-                self.fv[0]
-                  .disableValidator('cpf_cnpj', 'vat')
-                  .enableValidator('cpf_cnpj', 'id')
-                  .revalidateField('cpf_cnpj');
-              } else {
-                self.fv[0]
-                  .disableValidator('cpf_cnpj', 'id')
-                  // .enableValidator('cpf_cnpj', 'vat')
-                  .revalidateField('cpf_cnpj');
-              }
-            }
+      .mask('000.000.000-00', {
+        onComplete: function(val, e, field) {
+          self.fv[0].revalidateField('cpf').then(ret => {
+            if (ret === 'Valid') $('#nome').focus();
           });
-          field.mask(
-            $.jMaskGlobals.CPFCNPJMaskBehavior.apply({}, args),
-            options
-          );
-        },
-        onComplete: function(val, e, field) {}
+        }
       });
 
     $('#dt_nascimento')
@@ -256,41 +219,8 @@ new IOService(
             .first()
             .focus();
         }
-        // onKeyPress: function(val, e, field, options) {
-        //   if ($(field).attr('id') == 'celular1')
-        //     self.fv[1].revalidateField($(field).attr('id'));
-        //   field.mask(
-        //     $.jMaskGlobals.SPMaskBehavior.apply({}, arguments),
-        //     options
-        //   );
-        // },
-        // onComplete: function(val, e, field) {
-        //   $(field)
-        //     .parent()
-        //     .parent()
-        //     .next()
-        //     .find('input')
-        //     .first()
-        //     .focus();
-        // }
       }
     );
-
-    // $('#phone, #mobile').mask($.jMaskGlobals.SPMaskBehavior, {
-    //   onKeyPress: function(val, e, field, options) {
-    //     self.fv[0].revalidateField($(field).attr('id'));
-    //     field.mask($.jMaskGlobals.SPMaskBehavior.apply({}, arguments), options);
-    //   },
-    //   onComplete: function(val, e, field) {
-    //     $(field)
-    //       .parent()
-    //       .parent()
-    //       .next()
-    //       .find('input')
-    //       .first()
-    //       .focus();
-    //   }
-    // });
 
     $('#zipCode').mask('00000-000');
 
@@ -300,22 +230,10 @@ new IOService(
       form.querySelector('.step-pane[data-step="1"]'),
       {
         fields: {
-          cod_cliente: {
+          cpf: {
             validators: {
               notEmpty: {
-                message: 'código obrigatório'
-              }
-            }
-          },
-          cpf_cnpj: {
-            validators: {
-              notEmpty: {
-                message: 'O cpf/cnpj é obrigatório'
-              },
-              vat: {
-                enabled: false,
-                country: 'BR',
-                message: 'cnpj inválido'
+                message: 'O cpf é obrigatório'
               },
               id: {
                 country: 'BR',
@@ -346,7 +264,7 @@ new IOService(
             validators: {
               promise: {
                 notEmpty: {
-                  message: 'The avatar is required'
+                  message: 'o cep é obrigatório'
                 },
                 enabled: true,
                 promise: function(input) {
@@ -371,10 +289,6 @@ new IOService(
           },
           celular1: {
             validators: {
-              // stringLength: {
-              //   min: 14,
-              //   message: 'Celular inválido'
-              // },
               phone: {
                 country: 'BR',
                 message: 'Celular inválido'
@@ -410,23 +324,27 @@ new IOService(
           },
           email: {
             validators: {
-              // notEmpty: {
-              //   message: 'O e-mail principal é obrigatório'
-              // },
+              notEmpty: {
+                message: 'O e-mail principal é obrigatório!'
+              },
               emailAddress: {
                 message: 'E-mail Inválido'
               }
             }
-          }
-          // observacao: {
-          //   validators: {
-          //     notEmpty: {
-          //       enabled: false,
-          //       message: 'Campo obrigatório!'
-          //     }
-          //   }
-          // }
-          // has_images: {
+          },
+          resumo: {
+            validators: {
+              notEmpty: {
+                message: 'O Resumo é obrigatório!'
+              }
+            },
+            callback: function(a, b) {
+              return {
+                valid: true, // or false
+                message: 'The error message'
+              };
+            }
+          } // has_images: {
           //   validators: {
           //     callback: {
           //       message: 'Insira a logo da empresa!',
@@ -461,6 +379,23 @@ new IOService(
           else {
           }
         }
+      })
+      .on('core.form.invalid', function(e) {
+        let els = Object.values(form.elements);
+
+        const x = els.filter(el => {
+          return (
+            el.classList.contains('is-invalid') &&
+            el.getAttribute('tab') !== null
+          );
+        });
+
+        if (x.length) {
+          self.tabs[x[0].getAttribute('tab')].tab.tab('show');
+        }
+        // const x = els.filter(el => {
+        //   return el.classList.contains('is-invalid');
+        // });
       });
 
     self.fv = [fv1];
@@ -470,8 +405,8 @@ new IOService(
     self.dz = new DropZoneLoader({
       id: '#custom-dropzone',
       autoProcessQueue: false,
-      thumbnailWidth: 300,
-      thumbnailHeight: 300,
+      thumbnailWidth: 200,
+      thumbnailHeight: 200,
       class: 'm-auto',
       maxFiles: 1,
       mainImage: false,
@@ -519,9 +454,10 @@ new IOService(
     });
 
     self.callbacks.view = view(self);
-    // self.callbacks.update.onSuccess = () => {
-    //   self.tabs['listar'].tab.tab('show');
-    // }
+
+    self.callbacks.update.onSuccess = () => {
+      self.tabs['telefones-e-endereco'].tab.tab('show');
+    };
 
     self.callbacks.delete.onSuccess = data => {
       console.log('no success do delete');
@@ -564,13 +500,10 @@ new IOService(
     // };
 
     self.callbacks.unload = self => {
-      self.tabs['historico'].tab.addClass('disabled');
-
-      $('#cpf_cnpj, #cod_cliente').removeAttr('readonly');
-
-      $(
-        '#cod_cliente,#cpf_cnpj, #nome, #email, #address, #address2, #city,#city_id, #state'
-      ).val('');
+      self.tabs['formacao-academica'].tab.addClass('disabled');
+      $('#cpf, #nome, #email, #address, #address2, #city,#city_id, #state').val(
+        ''
+      );
 
       self.dz.removeAllFiles(true);
     };
@@ -650,37 +583,17 @@ function view(self) {
 
       if (d.group != null) self.dz.reloadImages(d);
 
-      $('#cod_cliente').val(d.cod_cliente);
-      $('#otica_id').val(d.otica_id);
+      // $('#otica_id').val(d.otica_id);
 
-      $('#cpf_cnpj')
-        .val(d.cpf_cnpj)
+      $('#cpf')
+        .val(d.cpf)
         .attr('readonly', true)
         .trigger('input');
 
-      $('#cod_cliente')
-        .val(d.cod_cliente)
-        .attr('readonly', true)
-        .trigger('input');
-
-      if ($('#cpf_cnpj').cleanVal().length == 11) {
-        self.fv[0]
-          .disableValidator('cpf_cnpj', 'vat')
-          .enableValidator('cpf_cnpj', 'id')
-          .revalidateField('cpf_cnpj');
-      } else {
-        self.fv[0]
-          .disableValidator('cpf_cnpj', 'id')
-          // .enableValidator('cpf_cnpj', 'vat')
-          .revalidateField('cpf_cnpj');
-      }
+      self.fv[0].revalidateField('cpf');
 
       $('#nome').val(d.nome);
-      // $('#status').val(d.status);
-      $('#rg').val(d.rg);
       $('#sexo').val(d.sexo);
-      $('#estado_civil').val(d.estado_civil);
-      $('#local_trabalho').val(d.local_trabalho);
 
       if (d.dt_nascimento !== null) {
         var dtn = d.dt_nascimento.split('-');
@@ -688,9 +601,6 @@ function view(self) {
           .pickadate('picker')
           .set('select', [dtn[0], dtn[1] - 1, dtn[2]]);
       }
-
-      $('#refs_pessoais').val(d.refs_pessoais);
-      $('#refs_comerciais').val(d.refs_comerciais);
 
       $('#telefone1')
         .val(d.telefone1)
@@ -721,9 +631,11 @@ function view(self) {
 
         $('#address').val(d.address);
         $('#address2').val(d.address2);
+
+        $('#resumo').val(d.resumo);
       });
 
-      self.tabs['historico'].tab.removeClass('disabled');
+      self.tabs['formacao-academica'].tab.removeClass('disabled');
       document.getElementById('user_name').firstChild.nodeValue = d.nome;
     },
     onError: function(self) {

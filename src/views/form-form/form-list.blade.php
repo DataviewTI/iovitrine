@@ -8,15 +8,15 @@
     
   </div>
 	@component('IntranetOne::io.components.datatable',[
-	"_id" => "hist-table",
+	"_id" => "form-table",
 	"_columns"=> [
 			["title" => "#"],
-			["title" => "Loja"],
-			["title" => "Produto"],
-			["title" => "Data"],
-			["title" => "Valor"],
-			["title" => "Entrada"],
-			["title" => "S"],
+			["title" => "order"],
+			["title" => "Tipo"],
+			["title" => "Nome do Curso"],
+			["title" => "Instituição"],
+			["title" => "Inicio"],
+			["title" => "Conclusão"],
 			["title" => "Ações"]
 		]
 	])

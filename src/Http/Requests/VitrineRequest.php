@@ -12,8 +12,8 @@ class VitrineRequest extends IORequest
     $input = parent::sanitize();
     $input['city_id'] = $input['city_id'];
   
-    if (isset($input['cpf_cnpj']))
-      $input['cpf_cnpj'] = preg_replace('/\D/', '', $input['cpf_cnpj']);
+    if (isset($input['cpf']))
+      $input['cpf'] = preg_replace('/\D/', '', $input['cpf']);
   
     $input['cep'] = preg_replace('/\D/', '', $input['zipCode']);
 
@@ -34,15 +34,15 @@ class VitrineRequest extends IORequest
       $isUpdate = $san['isUpdate'] ? $san['isUpdate'] : null;
 
       return [
-        'cpf_cnpj' => 'required|unique:vitrines,cpf_cnpj,'.$isUpdate.',id',
-        'cod_cliente' => 'required|unique:vitrines,cod_cliente,'.$isUpdate.',id',
+        'cpf' => 'required|unique:vitrines,cpf,'.$isUpdate.',id',
+        'email' => 'required|unique:vitrines,email,'.$isUpdate.',id',
       ]; 
     }
 
     public function messages(){
       return [
-        'cpf_cnpj.unique' => 'CPF/CNPJ já existe para outro usuário',
-        'cod_cliente.unique' => 'Código já existe para outro usuário',
+        'cpf.unique' => 'CPF/CNPJ já existe para outro usuário',
+        'email.unique' => 'Email já existe para outro usuário',
       ];
     }
 }

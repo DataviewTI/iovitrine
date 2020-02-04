@@ -11,7 +11,7 @@ composer require dataview/iovitrine
 ```
 
 ```sh
-php artisan io-entity:install
+php artisan io-vitrine:install
 ```
 
 - Configure o webpack conforme abaixo

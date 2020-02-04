@@ -3,6 +3,8 @@ namespace Dataview\IOVitrine\Console;
 use Dataview\IntranetOne\Console\IOServiceInstallCmd;
 use Dataview\IOVitrine\IOVitrineServiceProvider;
 use Dataview\IOVitrine\VitrineSeeder;
+use Dataview\IntranetOne\IntranetOne;
+
 
 class Install extends IOServiceInstallCmd
 {
@@ -12,6 +14,7 @@ class Install extends IOServiceInstallCmd
       "provider"=> IOVitrineServiceProvider::class,
       "seeder"=>VitrineSeeder::class,
     ]);
+
   }
 
   public function handle(){

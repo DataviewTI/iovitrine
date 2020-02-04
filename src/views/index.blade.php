@@ -23,9 +23,9 @@
           "view"=>"Vitrine::form"
         ],
         [
-          "tab"=>"Histórico",
+          "tab"=>"Formação Acadêmica",
           "icon"=>"ico ico-history",
-          "view"=>"Vitrine::form-historico"
+          "view"=>"Vitrine::form-formacao"
         ],      
       ]
     ])
@@ -38,5 +38,5 @@
 <script src="{{ asset('io/services/io-vitrine-babel.min.js') }}"></script>
 <script src="{{ asset('io/services/io-vitrine-mix.min.js') }}"></script>
 <script src="{{ asset('io/services/io-vitrine.min.js') }}"></script>
-<script src="{{ asset('io/services/io-vitrine-history.min.js') }}"></script>
+<script src="{{ asset('io/services/io-vitrine-formacao.min.js') }}"></script>
 @stop

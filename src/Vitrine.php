@@ -3,6 +3,7 @@ namespace Dataview\IOVitrine;
 
 use Dataview\IntranetOne\IOModel;
 use Dataview\IntranetOne\Group;
+use Dataview\IntranetOne\Category;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Vitrine extends IOModel
@@ -14,15 +15,10 @@ class Vitrine extends IOModel
 
 
     protected $fillable = [
-        'cpf_cnpj',
-        'cod_cliente',
-        'otica_id',
+        'cpf',
+        // 'otica_id',
         'nome',
-        'rg',
         'sexo',
-        'estado_civil',
-        'profissao',
-        'local_trabalho',
         'dt_nascimento',
         'telefone1',
         'telefone2',
@@ -35,8 +31,6 @@ class Vitrine extends IOModel
         'city_id',
         'group_id',
         'observacao',
-        'refs_pessoais',
-        'refs_comerciais'
       ];
 
     protected $dates = ['deleted_at'];
@@ -49,13 +43,22 @@ class Vitrine extends IOModel
       return $this->belongsTo('Dataview\IntranetOne\Group');
     }
     
-    public function otica(){
-      return $this->belongsTo('Dataview\IOVitrine\Models\Otica');
+    // public function otica(){
+    //   return $this->belongsTo('Dataview\IOVitrine\Models\Otica');
+    // }
+
+    // public function groups(){
+    //   return $this->belongsToMany('Dataview\IntranetOne\Group')->withPivot('otica_id','date','value','payment','product','details','status');
+    // }
+
+    public function formacao(){
+      return $this->belongsToMany('Dataview\IntranetOne\Category','vitrine_category')->withPivot('area','curso','instituicao','inicio','fim');
     }
 
-    public function groups(){
-      return $this->belongsToMany('Dataview\IntranetOne\Group')->withPivot('otica_id','date','value','payment','product','details','status');
-    }
+
+    // public function groups(){
+    //   return $this->belongsToMany('Dataview\IntranetOne\Group')->withPivot('otica_id','date','value','payment','product','details','status');
+    // }
 
 
   public static function boot(){ 

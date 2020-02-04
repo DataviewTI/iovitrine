@@ -26,6 +26,6 @@ class IOVitrineServiceProvider extends ServiceProvider
   
     $this->app->make('Dataview\IOVitrine\VitrineController');
     $this->app->make('Dataview\IOVitrine\VitrineRequest');
-    $this->app->make('Dataview\IOVitrine\VitrineHistoryRequest');
+    $this->app->make('Dataview\IOVitrine\VitrineFormacaoRequest');
   }
 }
