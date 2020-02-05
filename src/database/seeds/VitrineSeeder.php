@@ -19,9 +19,9 @@ class VitrineSeeder extends Seeder
         $service = Service::create([
             'service' => "Vitrine",
             'alias' => 'vitrine',
-            'trans' => 'Vitrine',
-            'ico' => 'ico-save',
-            'description' => 'Vitrine do Professor',
+            'trans' => 'Professor',
+            'ico' => 'ico-teacher',
+            'description' => 'Cadastro do Professor',
             'order' => Service::max('order') + 1,
         ]);
     }
@@ -36,26 +36,26 @@ class VitrineSeeder extends Seeder
 
       \DB::statement('SET FOREIGN_KEY_CHECKS=0;');
       \DB::table('cities')->truncate();
-      \DB::table('oticas')->truncate();
+      // \DB::table('oticas')->truncate();
       \DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-      $oticas = [
-        ["name"=>"Ótica Baroni", "alias"=> "Baroni", "main" => false],
-        ["name"=>"Ótica Ceres", "alias"=> "Ceres", "main" => false],
-        ["name"=>"Ótica Globo", "alias"=>"Globo", "main" => false],
-        ["name"=>"Ótica Gurupi", "alias"=>"Gurupi", "main" => false],
-        ["name"=>"Rio Ótica", "alias"=>"Rio Ótica","main" => true],
-        ["name"=>"Ótica Vênus", "alias"=>"Vênus", "main" => false],
-        ["name"=>"Ótica Visão", "alias"=>"Visão", "main" => false],
-      ];
+      // $oticas = [
+      //   ["name"=>"Ótica Baroni", "alias"=> "Baroni", "main" => false],
+      //   ["name"=>"Ótica Ceres", "alias"=> "Ceres", "main" => false],
+      //   ["name"=>"Ótica Globo", "alias"=>"Globo", "main" => false],
+      //   ["name"=>"Ótica Gurupi", "alias"=>"Gurupi", "main" => false],
+      //   ["name"=>"Rio Ótica", "alias"=>"Rio Ótica","main" => true],
+      //   ["name"=>"Ótica Vênus", "alias"=>"Vênus", "main" => false],
+      //   ["name"=>"Ótica Visão", "alias"=>"Visão", "main" => false],
+      // ];
 
-      foreach($oticas as $o){
-         Otica::create([
-            'name' => $o["name"],
-            'alias' => $o["alias"],
-            'main' => $o["main"],
-          ]);
-      }
+      // foreach($oticas as $o){
+      //    Otica::create([
+      //       'name' => $o["name"],
+      //       'alias' => $o["alias"],
+      //       'main' => $o["main"],
+      //     ]);
+      // }
 
       // $json = File::get(IOVitrineServiceProvider::pkgAddr('/assets/src/cities.json'));
       // $data = json_decode($json, true);

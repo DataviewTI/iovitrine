@@ -1,8 +1,8 @@
 @php
   use Dataview\IntranetOne\IntranetOne;
-  use Dataview\IOVitrine\Models\Otica;
+  // use Dataview\IOVitrine\Models\Otica;
   // $ecivil = IntranetOne::getEnumValues('vitrines');
-  $oticas = Otica::select('id','alias','main','name')->orderBy('main')->orderBy('alias')->get();
+  // $oticas = Otica::select('id','alias','main','name')->orderBy('main')->orderBy('alias')->get();
   // $situacao = IntranetOne::getEnumValues('vitrine','status');
 @endphp
 
