@@ -6,7 +6,6 @@
 
   $grauId = Category::where('service_id',$serv)->where('category','grau')->whereNull('category_id')->value('id');
   $areaId = Category::where('service_id',$serv)->where('category','area')->whereNull('category_id')->value('id');
-  
 
   $grau = Category::select('id','category_id','category')->where('category_id',$grauId)->get();
   $area = Category::select('id','category_id','category')->where('category_id',$areaId)->get();
