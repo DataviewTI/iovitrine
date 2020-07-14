@@ -126,7 +126,7 @@ class VitrineSeeder extends Seeder
       //Criar seeds de teste
 
       //Criando providers de teste
-      for($i=0;$i<70;$i++){
+      for($i=0;$i<55;$i++){
         
         $midName = $faker->boolean(30) ? $faker->lastName.' ' : '';
         $gender = $faker->boolean(60) ? 'female' : 'male';

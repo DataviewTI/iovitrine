@@ -17,7 +17,7 @@
     }
   },
   "require": {
-    "dataview/intranetone": "*"
+    "intervention/image": "^2.5.1"
   },
   "extra": {
     "laravel": {
