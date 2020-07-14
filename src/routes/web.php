@@ -3,6 +3,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web','admin'], 'as' => 'adm
     Route::group(['prefix' => 'vitrine'], function () {
     Route::get('/','VitrineController@index');
     Route::get('list', 'VitrineController@list');
+    Route::get('list-frontend', 'VitrineController@listFrontEnd');
     Route::get('view/{id}', 'VitrineController@view');
     Route::post('create', 'VitrineController@create');
     Route::post('update/{id}', 'VitrineController@update');

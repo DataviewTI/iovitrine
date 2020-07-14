@@ -5,6 +5,7 @@ use Dataview\IntranetOne\IOModel;
 use Dataview\IntranetOne\Group;
 use Dataview\IntranetOne\Service;
 use Dataview\IntranetOne\Category;
+use Dataview\IntranetOne\City;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Vitrine extends IOModel
@@ -37,7 +38,7 @@ class Vitrine extends IOModel
     protected $dates = ['deleted_at'];
 
     public function city(){
-      return $this->belongsTo('City');
+      return $this->belongsTo('Dataview\IntranetOne\City');
     }
 
     public function group(){

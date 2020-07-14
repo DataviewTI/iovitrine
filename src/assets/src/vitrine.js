@@ -6,6 +6,22 @@ new IOService(
   },
   (self) => {
     setTimeout(() => {
+      // $.ajax({
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   complete: (jqXHR) => {
+      //     $.ajaxSettings.headers["X-CSRF-Token"] = laravel_token;
+      //   },
+      //   url: `${self.path}/list-frontend`,
+      // })
+      //   .done((ret) => {
+      //     console.log(ret);
+      //   })
+      //   .fail((err) => {
+      //     console.log("err", err);
+      //   });
+
       self.tabs["formacao-academica"].tab.addClass("disabled");
 
       // $("#user_name_container").style({ display: 'hidden' })
@@ -92,7 +108,6 @@ new IOService(
             orderable: true,
             width: "5%",
             render: function(data, type, row) {
-              console.log("formacao", row, row.formacao.length, row.formacao);
               return row.formacao.length ? row.formacao[0].category : "";
             },
           },
@@ -482,7 +497,6 @@ new IOService(
     };
 
     self.callbacks.delete.onSuccess = (data) => {
-      console.log("no success do delete");
       self.callbacks.unload(self);
     };
 
@@ -598,7 +612,6 @@ function view(self) {
     onSuccess: function(data) {
       const d = data;
       self.dz.removeAllFiles(true);
-      console.log("ddd", d);
       if (d.group != null) self.dz.reloadImages(d);
 
       $("#cpf")

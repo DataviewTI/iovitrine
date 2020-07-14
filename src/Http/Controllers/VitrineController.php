@@ -98,6 +98,21 @@ class VitrineController extends IOController
   }
 
 
+  public function listFrontEnd() {
+
+    $query = Vitrine::select()
+    ->with([
+        'city',
+        'formacao',
+        'group' => function($query){
+        $query->select('groups.id','sizes')
+          ->with('files');
+        },
+    ])->get();
+ 
+    return response()->json(['success' => true, 'data' => $query]);
+  }
+  
   public function view($id)
   {
     $check = $this->__view();
