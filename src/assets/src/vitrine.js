@@ -11,8 +11,6 @@ new IOService(
       // $("#user_name_container").style({ display: 'hidden' })
       document.getElementById("user_name").firstChild.nodeValue = "";
 
-      console.log();
-
       self.tabs["cadastrar"].tab.on("shown.bs.tab", (e) => {
         IO.active = self;
       });
@@ -94,6 +92,7 @@ new IOService(
             orderable: true,
             width: "5%",
             render: function(data, type, row) {
+              console.log("formacao", row, row.formacao.length, row.formacao);
               return row.formacao.length ? row.formacao[0].category : "";
             },
           },
@@ -401,41 +400,64 @@ new IOService(
     self.fv = [fv1];
 
     //Dropzone initialization
-    Dropzone.autoDiscover = false;
     self.dz = new DropZoneLoader({
-      id: "#custom-dropzone",
-      autoProcessQueue: false,
-      thumbnailWidth: 200,
-      thumbnailHeight: 200,
-      class: "m-auto",
+      el: "#custom-dropzone",
+      thumbnailWidth: 180,
+      thumbnailHeight: 180,
+      sortable: false,
       maxFiles: 1,
-      mainImage: false,
       copy_params: {
         original: true,
-        sizes: {},
+        sizes: {
+          thumb: { w: 180, h: 180 },
+        },
       },
       crop: {
-        ready: (cr) => {
-          cr.aspect_ratio_x = 1;
-          cr.aspect_ratio_y = 1;
-        },
+        aspect_ratio_x: 1,
+        aspect_ratio_y: 1,
       },
       buttons: {
         reorder: false,
       },
-      onSuccess: function(file, ret) {
-        //self.fv[0].revalidateField('has_images');
-      },
-      onPreviewLoad: function(_t) {
-        if (self.toView !== null) {
-          let _conf = self.config.default;
-          self.dz.removeAllFiles(true);
-          // self.dz.reloadImages(self.config.default);
-          self.fv[0].validate();
-          //aa
-        }
-      },
+      // removedFile: function(file) {},
+      // onSuccess: function(file, ret) {},
     });
+    // //Dropzone initialization
+    // Dropzone.autoDiscover = false;
+    // self.dz = new DropZoneLoader({
+    //   el: "#custom-dropzone",
+    //   autoProcessQueue: false,
+    //   thumbnailWidth: 200,
+    //   thumbnailHeight: 200,
+    //   class: "m-auto",
+    //   maxFiles: 1,
+    //   mainImage: false,
+    //   copy_params: {
+    //     original: true,
+    //     sizes: {},
+    //   },
+    //   crop: {
+    //     ready: (cr) => {
+    //       cr.aspect_ratio_x = 1;
+    //       cr.aspect_ratio_y = 1;
+    //     },
+    //   },
+    //   buttons: {
+    //     reorder: false,
+    //   },
+    //   onSuccess: function(file, ret) {
+    //     //self.fv[0].revalidateField('has_images');
+    //   },
+    //   onPreviewLoad: function(_t) {
+    //     if (self.toView !== null) {
+    //       let _conf = self.config.default;
+    //       self.dz.removeAllFiles(true);
+    //       // self.dz.reloadImages(self.config.default);
+    //       self.fv[0].validate();
+    //       //aa
+    //     }
+    //   },
+    // });
 
     //need to transform wizardActions in a method of Class
     self.wizardActions(function() {
@@ -575,15 +597,9 @@ function view(self) {
   return {
     onSuccess: function(data) {
       const d = data;
-
-      // $('#__form_edit').val(d.id);
-
-      // //reload imagens
       self.dz.removeAllFiles(true);
-
+      console.log("ddd", d);
       if (d.group != null) self.dz.reloadImages(d);
-
-      // $('#otica_id').val(d.otica_id);
 
       $("#cpf")
         .val(d.cpf)

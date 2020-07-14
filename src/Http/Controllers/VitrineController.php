@@ -27,8 +27,8 @@ class VitrineController extends IOController
         ->whereNotNull('fim')
         ->leftJoin('categories as c', 'vitrine_category.category_id', '=', 'c.id')
         ->orderBy('c.order','desc')
-        ->orderBy('vitrine_category.id','desc')
-        ->limit(2);
+        ->orderBy('vitrine_category.id','desc');
+        // ->limit(2);
 		}])
     ->orderBy('created_at', 'desc')->get();
 

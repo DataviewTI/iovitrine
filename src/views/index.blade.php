@@ -35,8 +35,6 @@
 <script src="{{ asset('js/pickadate-full.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/optimized_cities.js') }}" charset="ISO-8859-1" type="text/javascript"></script>
 
-<script src="{{ asset('io/services/io-vitrine-babel.min.js') }}"></script>
-<script src="{{ asset('io/services/io-vitrine-mix.min.js') }}"></script>
 <script src="{{ asset('io/services/io-vitrine.min.js') }}"></script>
-<script src="{{ asset('io/services/io-vitrine-formacao.min.js') }}"></script>
+<script src="{{ asset('io/services/io-vitrine-mix.min.js') }}"></script>
 @stop

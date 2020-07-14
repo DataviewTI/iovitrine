@@ -3,6 +3,7 @@ namespace Dataview\IOVitrine;
 
 use Dataview\IntranetOne\IOModel;
 use Dataview\IntranetOne\Group;
+use Dataview\IntranetOne\Service;
 use Dataview\IntranetOne\Category;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -65,10 +66,11 @@ class Vitrine extends IOModel
     parent::boot(); 
 
     static::created(function (Vitrine $obj) {
-      if($obj->getAppend("has_images")){
+      if($obj->getAppend("hasImages")){
         $group = new Group([
           'group' => "Vitrine Avatar".$obj->id,
-          'sizes' => $obj->getAppend("sizes")
+          'sizes' => $obj->getAppend("sizes"),
+          'service_id' => Service::where('alias','vitrine')->value('id')
         ]);
         $group->save();
         $obj->group()->associate($group)->save();
