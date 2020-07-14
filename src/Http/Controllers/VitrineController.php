@@ -100,7 +100,7 @@ class VitrineController extends IOController
 
   public function listFrontEnd() {
 
-    $query = Vitrine::select()
+    $query = Vitrine::select('*','group_id')
     ->with([
         'city',
         'formacao',

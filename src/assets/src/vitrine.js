@@ -6,21 +6,21 @@ new IOService(
   },
   (self) => {
     setTimeout(() => {
-      // $.ajax({
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   complete: (jqXHR) => {
-      //     $.ajaxSettings.headers["X-CSRF-Token"] = laravel_token;
-      //   },
-      //   url: `${self.path}/list-frontend`,
-      // })
-      //   .done((ret) => {
-      //     console.log(ret);
-      //   })
-      //   .fail((err) => {
-      //     console.log("err", err);
-      //   });
+      $.ajax({
+        headers: {
+          "Content-Type": "application/json",
+        },
+        complete: (jqXHR) => {
+          $.ajaxSettings.headers["X-CSRF-Token"] = laravel_token;
+        },
+        url: `${self.path}/list-frontend`,
+      })
+        .done((ret) => {
+          console.log(ret);
+        })
+        .fail((err) => {
+          console.log("err", err);
+        });
 
       self.tabs["formacao-academica"].tab.addClass("disabled");
 
