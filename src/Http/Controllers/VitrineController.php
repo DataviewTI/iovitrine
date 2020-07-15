@@ -152,14 +152,15 @@ class VitrineController extends IOController
         return response()->json(['errors' => $check['errors']], $check['code']);
     }
 
-    $query = Vitrine::select('vitrines.*', 'cities.city', 'cities.region')
+    $query = Vitrine::select()
       ->with([
+          'city',
           'group'=>function($query){
           $query->select('groups.id','sizes')
           ->with('files');
         },
       ])
-        ->join('cities', 'vitrines.city_id', '=', 'cities.id')
+        // ->leftJoin('cities', 'vitrines.city_id', '=', 'cities.id')
         ->where('vitrines.id', $id)->get();
 
     return response()->json(['success' => true, 'data' => $query]);
