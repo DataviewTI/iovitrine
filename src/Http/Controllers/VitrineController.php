@@ -50,7 +50,7 @@ class VitrineController extends IOController
   }
 
 
-  public function createFrontend(VitrineRequest $request){
+  public function createFrontEnd(VitrineRequest $request){
    
     $data = (object) $request->all();
 

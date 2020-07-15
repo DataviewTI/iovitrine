@@ -2,7 +2,7 @@
 
 Route::group(['prefix' => 'vitrine'], function () {
   Route::get('list-frontend', 'VitrineController@listFrontEnd');
-  Route::post('create', 'VitrineController@createFrontEnd');
+  Route::post('create-frontend', 'VitrineController@createFrontEnd');
 });	
 
 
