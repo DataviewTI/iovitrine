@@ -10,14 +10,17 @@ class VitrineRequest extends IORequest
   public function sanitize()
   {
     $input = parent::sanitize();
-    $input['city_id'] = $input['city_id'];
+    if (isset($input['city_id'])) 
+      $input['city_id'] = $input['city_id'];
   
     if (isset($input['cpf']))
       $input['cpf'] = preg_replace('/\D/', '', $input['cpf']);
   
-    $input['cep'] = preg_replace('/\D/', '', $input['zipCode']);
+    if (isset($input['zipCode']))
+      $input['cep'] = preg_replace('/\D/', '', $input['zipCode']);
 
-    $input['sizes'] = $input['__dz_copy_params'];
+    if (isset($input['__dz_copy_params']))
+      $input['sizes'] = $input['__dz_copy_params'];
     // $input['otica_id'] = $input['ori'];
 
     if (isset($input['dt_nascimento_submit']))
@@ -30,6 +33,10 @@ class VitrineRequest extends IORequest
     public function rules()
     {
       $san = $this->sanitize();
+
+      if(!isset($san['isUpdate']))
+        $san['isUpdate'] = false;
+
 
       $isUpdate = $san['isUpdate'] ? $san['isUpdate'] : null;
 

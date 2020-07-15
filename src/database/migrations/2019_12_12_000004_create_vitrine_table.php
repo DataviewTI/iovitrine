@@ -23,9 +23,8 @@ class CreateVitrineTable extends Migration
         $table->char('zipCode', 9)->nullable();
         $table->string('address')->nullable();
         $table->string('address2')->nullable();
-        $table->char('city_id',7);
+        $table->char('city_id',7)->nullable();
         $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade')->onUpdate('cascade');
-        // $table->foreign('otica_id')->references('id')->on('oticas')->onDelete('cascade')->onUpdate('cascade');
         $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade')->onUpdate('cascade');
         $table->text('resumo')->nullable();
         $table->timestamps();

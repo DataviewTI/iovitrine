@@ -50,6 +50,38 @@ class VitrineController extends IOController
   }
 
 
+  public function createFrontend(VitrineRequest $request){
+   
+    $data = (object) $request->all();
+
+    $obj = new Vitrine([
+      "cpf"=>$data->cpf,
+      "nome"=>$data->name,
+      "celular1"=>$data->phone,
+      "email"=>$data->email,
+      "resumo"=>$data->description
+    ]);
+
+
+    $obj->setAppend("sizes",'{"original":true,"sizes":{"thumb":{"w":180,"h":180}}}');
+    $obj->setAppend("hasImages",true);
+    $obj->save();
+
+    // $obj = new Vitrine($request->all());
+
+    // if($request->sizes!= null){
+    //   $obj->setAppend("sizes",$request->sizes);
+    //   $obj->setAppend("has_images",$request->has_images);
+    //   $obj->save();
+    // }
+
+    // $obj->save();
+
+    // return response()->json(['success' => true, 'data' => ["id"=>$obj->id]]);
+  }
+
+
+
   public function create(VitrineRequest $request){
     $check = $this->__create($request);
     
@@ -61,7 +93,7 @@ class VitrineController extends IOController
 
     if($request->sizes!= null){
       $obj->setAppend("sizes",$request->sizes);
-      $obj->setAppend("has_images",$request->has_images);
+      $obj->setAppend("hasImages",$request->has_images);
       $obj->save();
     }
 
