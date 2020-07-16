@@ -536,8 +536,8 @@ new IOService(
     //   });
     // };
 
-    if (self.permissions.create && self.permissions.view) {
-      self.view(IO.loggedUser.userId);
+    if (IO.loggedUser.isFrontendUser) {
+      self.view(IO.loggedUser.userEmail);
     }
 
     self.callbacks.unload = (self) => {

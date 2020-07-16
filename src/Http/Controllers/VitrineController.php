@@ -23,7 +23,7 @@ class VitrineController extends IOController
 
   function list() {
     $query = Vitrine::select('id','cpf','nome','sexo','dt_nascimento','telefone1','telefone2','celular1','celular2','email','zipCode','address','address2','city_id','resumo','group_id', 'created_at')
-    ->with(['formacao' => function($query){
+    ->with(['formacao' => function($query) {
         $query->select('vitrine_category.id as vid','area','curso','instituicao','inicio','fim','c.category','c.id','c.order')
         ->whereNotNull('fim')
         ->leftJoin('categories as c', 'vitrine_category.category_id', '=', 'c.id')
@@ -161,17 +161,18 @@ class VitrineController extends IOController
         return response()->json(['errors' => $check['errors']], $check['code']);
     }
 
-    $query = Vitrine::select('vitrines.*', 'cities.city', 'cities.region')
-      ->with([
+    $query = Vitrine::
+      with([
+          'city',
           'group'=>function($query){
           $query->select('groups.id','sizes')
           ->with('files');
         },
-      ])
-        ->join('cities', 'vitrines.city_id', '=', 'cities.id')
-        ->where('vitrines.id', $id)->get();
+      ]);
 
-    return response()->json(['success' => true, 'data' => $query]);
+      $query = filter_var($id, FILTER_VALIDATE_EMAIL) ? $query->whereEmail($id) : $query->whereId($id);
+
+    return response()->json(['success' => true, 'data' => $query->get()]);
   }
 
 
@@ -203,6 +204,7 @@ class VitrineController extends IOController
     $_new = (object) $request->all();
 
     $_old = Vitrine::find($id);
+    // $_old = Vitrine::filter_var($id, FILTER_VALIDATE_EMAIL) ? Vitrine::whereEmail($id)->first() : Vitrine::whereId($id)->first();
 
     $upd = ['nome','sexo','dt_nascimento','telefone1','telefone2','celular1','celular2','email','zipCode','address','address2','city_id','resumo'];
 

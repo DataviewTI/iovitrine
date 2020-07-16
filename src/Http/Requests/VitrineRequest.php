@@ -37,7 +37,7 @@ class VitrineRequest extends IORequest
       $isUpdate =  data_get($san,'isUpdate',null);
 
       return [
-        'cpf' => 'required|unique:vitrines,cpf'.$isUpdate.',id',
+        'cpf' => 'required|unique:vitrines,cpf,'.$isUpdate.',id',
         'email' => 'required|unique:vitrines,email,'.$isUpdate.',id',
       ]; 
     }

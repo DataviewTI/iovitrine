@@ -3,12 +3,12 @@ namespace Dataview\IOVitrine;
 
 use Dataview\IntranetOne\Service;
 use Dataview\IntranetOne\Category;
-use Dataview\IOVitrine\Models\City;
+use Dataview\IntranetOne\City;
 use Dataview\IOVitrine\Models\Faculdade;
-// use Dataview\IOVitrine\Models\Otica;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 use Dataview\IOVitrine\IOVitrineServiceProvider;
+use Dataview\IntranetOne\IntranetOneServiceProvider;
 use Sentinel;
 use Faker;
 use Illuminate\Support\Str;
@@ -123,7 +123,30 @@ class VitrineSeeder extends Seeder
       }
 
 
-      //Criar seeds de teste
+      if(empty(\DB::table('cities')->select('id')->first())){
+        $json = File::get(IntranetOneServiceProvider::pkgAddr('/assets/src/base/js/data/cities.json'));
+        $data = json_decode($json, true);
+        foreach ($data as $obj) {
+            City::create([
+              'id' => $obj['i'],
+              'city' => $obj['c'],
+              'region' => $obj['u'],
+            ]);
+        }
+      }
+      
+
+      if(empty(\DB::table('faculdades')->select('id')->first())){
+        $json = File::get(IOVitrineServiceProvider::pkgAddr('/assets/src/data/fake-faculdades.json'));
+        $data = json_decode($json, true);
+        foreach ($data as $obj) {
+            Faculdade::create([
+              'faculdade' => $obj['f'],
+            ]);
+        }
+      }
+
+            //Criar seeds de teste
 
       //Criando providers de teste
       for($i=0;$i<40;$i++){
@@ -305,14 +328,7 @@ class VitrineSeeder extends Seeder
           
             }
           }
-
-
-
-
           $obj->save();
-          
-
-
           // $main = $faker->randomElement($cats);
           // $prov->categories()->attach($main);
 

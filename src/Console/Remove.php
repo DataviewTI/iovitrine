@@ -11,7 +11,8 @@ class Remove extends IOServiceRemoveCmd
   public function __construct(){
     parent::__construct([
       "service"=>"vitrine",
-      "tables" =>['vitrine_category','vitrines'],
+      "tables" =>['vitrine_category','vitrines','faculdades'],
+      "force" =>['cities'],
     ]);
 
     //adiciona a remoção específica de itens do group
