@@ -7,6 +7,13 @@ use Dataview\IntranetOne\Service;
 use Dataview\IntranetOne\Category;
 use Dataview\IntranetOne\City;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Sentinel;
+use Activation;
+use DataTables;
+use Mail;
+use Dataview\IOUser\Mail\UserActivation as UserActivation;
+use Dataview\IOUser\UserController as UserController;
+
 
 class Vitrine extends IOModel
 {
@@ -75,6 +82,30 @@ class Vitrine extends IOModel
         ]);
         $group->save();
         $obj->group()->associate($group)->save();
+
+        //se frontEndUser
+        if($obj->getAppend("frontendUser")) {
+          $user = Sentinel::register([
+            'first_name' => $obj->nome,
+            'email' => $obj->email,
+            'password' => "123456",
+            'confirm_password' => "123456",
+            'permissions'=>[
+              "user"=>true,
+              // "user.view"=>true,
+              "user.update"=>true,
+              "vitrine.view"=>true,
+              "vitrine.update"=>true
+            ]
+          ]);
+          $user->save();
+          $userRole = Sentinel::findRoleBySlug('user');
+
+          $usercontroller = new UserController();
+
+          $user->roles()->attach($userRole);          
+          $activation = $usercontroller->createActivation($user->id);          
+        }
       }
     });
     

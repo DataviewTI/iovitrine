@@ -15,7 +15,8 @@
         [
           "tab"=>"Listar",
           "icon"=>"ico ico-list",
-          "view"=>"Vitrine::table-list"
+          "view"=>"Vitrine::table-list",
+          "display"=>false,
         ],
         [
           "tab"=>"Cadastrar",

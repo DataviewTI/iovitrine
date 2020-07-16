@@ -8,6 +8,7 @@ use Dataview\IntranetOne\Group;
 use Dataview\IntranetOne\Category;
 use Dataview\IOVitrine\VitrineRequest;
 use Illuminate\Http\Response;
+use Validator;
 
 class VitrineController extends IOController
 {
@@ -52,6 +53,21 @@ class VitrineController extends IOController
 
   public function createFrontEnd(VitrineRequest $request){
    
+    $validator = Validator::make($request->all(),$request->rules(),$request->messages());
+    if($validator->fails())
+      $check = [
+        "status"=>false,
+        "errors"=>[
+          $validator->errors()->all()
+        ],
+        "code"=>422
+      ];
+    else
+      $check = null;
+
+   if(filled($check))
+      return response()->json(['errors' => $check['errors']], $check['code']);
+
     $data = (object) $request->all();
 
     $obj = new Vitrine([
@@ -65,19 +81,10 @@ class VitrineController extends IOController
 
     $obj->setAppend("sizes",'{"original":true,"sizes":{"thumb":{"w":180,"h":180}}}');
     $obj->setAppend("hasImages",true);
+    $obj->setAppend("frontendUser",true);
     $obj->save();
 
-    // $obj = new Vitrine($request->all());
-
-    // if($request->sizes!= null){
-    //   $obj->setAppend("sizes",$request->sizes);
-    //   $obj->setAppend("has_images",$request->has_images);
-    //   $obj->save();
-    // }
-
-    // $obj->save();
-
-    // return response()->json(['success' => true, 'data' => ["id"=>$obj->id]]);
+    return response()->json(['success' => true, 'data' => ["id"=>$obj->id]]);
   }
 
 
@@ -140,7 +147,9 @@ class VitrineController extends IOController
         $query->select('groups.id','sizes')
           ->with('files');
         },
-    ])->get();
+    ])
+    ->whereHas('formacao')
+    ->get();
  
     return response()->json(['success' => true, 'data' => $query]);
   }
@@ -152,15 +161,14 @@ class VitrineController extends IOController
         return response()->json(['errors' => $check['errors']], $check['code']);
     }
 
-    $query = Vitrine::select()
+    $query = Vitrine::select('vitrines.*', 'cities.city', 'cities.region')
       ->with([
-          'city',
           'group'=>function($query){
           $query->select('groups.id','sizes')
           ->with('files');
         },
       ])
-        // ->leftJoin('cities', 'vitrines.city_id', '=', 'cities.id')
+        ->join('cities', 'vitrines.city_id', '=', 'cities.id')
         ->where('vitrines.id', $id)->get();
 
     return response()->json(['success' => true, 'data' => $query]);

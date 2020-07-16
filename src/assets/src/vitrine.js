@@ -31,11 +31,12 @@ new IOService(
         IO.active = self;
       });
 
-      self.tabs["listar"].tab.on("shown.bs.tab", (e) => {
-        IO.active = self;
-        self.dt.ajax.reload();
-        self.dt.columns.adjust();
-      });
+      if (self.tabs.listar)
+        self.tabs["listar"].tab.on("shown.bs.tab", (e) => {
+          IO.active = self;
+          self.dt.ajax.reload();
+          self.dt.columns.adjust();
+        });
 
       self.tabs["telefones-e-endereco"].tab.on("shown.bs.tab", (e) => {
         $("#celular1").focus();
@@ -179,7 +180,6 @@ new IOService(
       })
       .on("click", ".btn-dt-button[data-original-title=editar]", function() {
         var data = self.dt.row($(this).parents("tr")).data();
-        console.log(data);
         self.view(data.id);
       })
       .on("click", ".ico-trash", function() {
@@ -536,6 +536,10 @@ new IOService(
     //   });
     // };
 
+    if (self.permissions.create && self.permissions.view) {
+      self.view(IO.loggedUser.userId);
+    }
+
     self.callbacks.unload = (self) => {
       self.tabs["formacao-academica"].tab.addClass("disabled");
       $("#cpf, #nome, #email, #address, #address2, #city,#city_id, #state").val(
@@ -610,9 +614,8 @@ function getCep(value) {
 
 function view(self) {
   return {
-    onSuccess: function(data = {}) {
+    onSuccess: function(data) {
       const d = data;
-      console.log("data,", data);
       self.dz.removeAllFiles(true);
       if (d.group != null) self.dz.reloadImages(d);
 
@@ -657,15 +660,14 @@ function view(self) {
         .val(d.zipCode)
         .trigger("input");
 
-      if (d.zipCode)
-        getCep(d.zipCode).then((el) => {
-          setCEP(el.meta.data, self);
+      getCep(d.zipCode).then((el) => {
+        setCEP(el.meta.data, self);
 
-          $("#address").val(d.address);
-          $("#address2").val(d.address2);
+        $("#address").val(d.address);
+        $("#address2").val(d.address2);
 
-          $("#resumo").val(d.resumo);
-        });
+        $("#resumo").val(d.resumo);
+      });
 
       self.tabs["formacao-academica"].tab.removeClass("disabled");
       document.getElementById("user_name").firstChild.nodeValue = d.nome;
