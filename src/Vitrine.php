@@ -88,8 +88,8 @@ class Vitrine extends IOModel
           $user = Sentinel::register([
             'first_name' => $obj->nome,
             'email' => $obj->email,
-            'password' => substr($obj->cpf,-6),
-            'confirm_password' => substr($obj->cpf,-6),
+            'password' => substr($obj->cpf,-5),
+            'confirm_password' => substr($obj->cpf,-5),
             'permissions'=>[
               "frontendUser"=>true,
               // "user.view"=>true,
@@ -104,7 +104,7 @@ class Vitrine extends IOModel
           $usercontroller = new UserController();
 
           $user->roles()->attach($userRole);          
-          $activation = $usercontroller->createActivation($user->id,["message"=>"A sua senha de acesso é ".substr($obj->cpf,-6)]);          
+          $activation = $usercontroller->createActivation($user->id,["message"=>"A sua senha de acesso é ".substr($obj->cpf,-5)]);          
         }
       }
     });

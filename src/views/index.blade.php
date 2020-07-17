@@ -16,7 +16,7 @@
           "tab"=>"Listar",
           "icon"=>"ico ico-list",
           "view"=>"Vitrine::table-list",
-          "display"=>false,
+          "display"=>!Sentinel::getUser()->inRole('frontendUser'),
         ],
         [
           "tab"=>"Cadastrar",
