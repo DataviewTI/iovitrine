@@ -268,10 +268,10 @@ class VitrineController extends IOController
 
 
   public function delete($id){
-    $check = $this->__delete();
-    if (!$check['status']) {
-        return response()->json(['errors' => $check['errors']], $check['code']);
-    }
+    // $check = $this->__delete();
+    // if (!$check['status']) {
+    //     return response()->json(['errors' => $check['errors']], $check['code']);
+    // }
 
     $obj = Vitrine::find($id);
     $obj = $obj->delete();
@@ -280,10 +280,10 @@ class VitrineController extends IOController
 
 
   public function formacaoDelete($id){
-    $check = $this->__delete();
-    if (!$check['status']) {
-        return response()->json(['errors' => $check['errors']], $check['code']);
-    }
+    // $check = $this->__delete();
+    // if (!$check['status']) {
+    //     return response()->json(['errors' => $check['errors']], $check['code']);
+    // }
 
     $ret = \DB::table('vitrine_category')->where('id',$id)->delete();
     return json_encode(['sts' => $ret]);
