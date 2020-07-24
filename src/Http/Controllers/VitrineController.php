@@ -111,13 +111,28 @@ class VitrineController extends IOController
 
 
   public function formacaoCreate(VitrineFormacaoRequest $request){
-    $check = $this->__create($request);
+    // $check = $this->__create($request);
     
-    if (!$check['status']) {
-        return response()->json(['errors' => $check['errors']], $check['code']);
-    } 
+    // if (!$check['status']) {
+    //     return response()->json(['errors' => $check['errors']], $check['code']);
+    // } 
     
-    $r = (object) $request->all();
+    $validator = Validator::make($request->all(),$request->rules(),$request->messages());
+    if($validator->fails())
+      $check = [
+        "status"=>false,
+        "errors"=>[
+          $validator->errors()->all()
+        ],
+        "code"=>422
+      ];
+    else
+      $check = null;
+
+   if(filled($check))
+      return response()->json(['errors' => $check['errors']], $check['code']);
+      
+          $r = (object) $request->all();
 
     $ent =Vitrine::where('id',$r->vitrineId)->first();
 
